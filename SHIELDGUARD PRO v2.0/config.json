@@ -1,0 +1,11 @@
+{
+  "email": "nachomollag6@gmail.com",
+  "app_password": "amshzqvvzyyqywjj",
+  "to_email": "ikermolla055@gmail.com",
+  "start_instructions": [
+    "docker compose build",
+    "docker compose up -d",
+    "Abrir http://TU_IP/dashboard.html"
+  ]
+}
+

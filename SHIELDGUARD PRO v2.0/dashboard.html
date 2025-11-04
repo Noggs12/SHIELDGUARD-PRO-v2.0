@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SHIELDGUARD PRO</title>
+  <style>
+    body { background:#0b0f14; color:#d8e1ea; font-family:Arial, sans-serif; margin:0; }
+    header { padding:16px 24px; background:#0f1620; position:sticky; top:0; z-index:1; box-shadow:0 2px 8px rgba(0,0,0,.4) }
+    h1 { margin:0; font-size:20px; letter-spacing:1px }
+    .blink { color:#2ee; animation: b 1.2s infinite; }
+    @keyframes b { 50% { opacity:.2 } }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:16px; padding:16px; }
+    .box { background:#101824; border:1px solid #1f2a38; border-radius:8px; padding:12px; }
+    h3 { margin-top:0; font-size:16px; color:#9cc3ff }
+    pre { background:#0b111a; padding:8px; border-radius:6px; overflow:auto; max-height:300px; }
+    .email { color:#ff0 }
+    .muted { color:#7f8a99; font-size:12px }
+  </style>
+  <script>
+    async function loadLogs() {
+      const blocks = [
+        ['http','http-logs'],
+        ['ssh','ssh-logs'],
+        ['emails','email-logs'],
+        ['network','net-logs'],
+        ['blocked','blocked-ips']
+      ];
+      for (const [name, id] of blocks) {
+        try {
+          const res = await fetch(`/logs/${name}`);
+          const data = await res.json();
+          const el = document.getElementById(id);
+          el.textContent = (data.lines || []).join('\n') || 'Ninguna';
+        } catch (e) {
+          const el = document.getElementById(id);
+          el.textContent = 'No disponible';
+        }
+      }
+    }
+    setInterval(loadLogs, 3000);
+    window.addEventListener('load', loadLogs);
+  </script>
+  </head>
+<body>
+  <header>
+    <h1>SHIELDGUARD PRO <span class="blink">●</span></h1>
+    <div class="muted">Docker + SSH Honeypot + Email Alerts</div>
+  </header>
+  <main class="grid">
+    <div class="box">
+      <h3>Alertas por Email Enviadas <span class="email">(Gmail)</span></h3>
+      <pre id="email-logs">Cargando…</pre>
+    </div>
+    <div class="box">
+      <h3>Intentos HTTP (falsos login)</h3>
+      <pre id="http-logs">Cargando…</pre>
+    </div>
+    <div class="box">
+      <h3>Intentos SSH</h3>
+      <pre id="ssh-logs">Cargando…</pre>
+    </div>
+    <div class="box">
+      <h3>Eventos de Red</h3>
+      <pre id="net-logs">Cargando…</pre>
+    </div>
+    <div class="box">
+      <h3>IPs Bloqueadas</h3>
+      <pre id="blocked-ips">Cargando…</pre>
+    </div>
+  </main>
+</body>
+</html>
+
+

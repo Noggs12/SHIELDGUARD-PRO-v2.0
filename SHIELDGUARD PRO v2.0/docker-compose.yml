@@ -1,0 +1,46 @@
+services:
+  honeypot-http:
+    build: .
+    container_name: shieldguard_http
+    ports:
+      - "80:80"
+    volumes:
+      - ./logs:/app/logs
+      - .:/app:ro
+    command: python3 honeypot-http.py
+    restart: unless-stopped
+
+  honeypot-ssh:
+    build: .
+    container_name: shieldguard_ssh
+    ports:
+      - "2222:2222"
+    volumes:
+      - ./logs:/app/logs
+    command: python3 honeypot-ssh.py
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    restart: unless-stopped
+
+  monitor:
+    build: .
+    container_name: shieldguard_monitor
+    volumes:
+      - ./logs:/app/logs
+    command: python3 monitor.py
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    restart: unless-stopped
+
+  email-sender:
+    build: .
+    container_name: shieldguard_email
+    volumes:
+      - ./logs:/app/logs
+    command: python3 email_alert.py --daemon
+    depends_on:
+      - monitor
+    restart: unless-stopped
+
